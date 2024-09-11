@@ -72,14 +72,23 @@ theorem comp_eval (f : X → Y) (g : Y → Z) (x : X) : (g ∘ f) x = g (f x) :=
 -- saying "it's true by definition"? Because now, if we want,
 -- we can `rw` the theorems to replace things by their definitions.
 example : Injective (id : X → X) :=
-  by-- you can start with `rw injective_def` if you like,
+  by
+  rw [injective_def]
+  intro a b
+  intro h1
+  rw[id_def] at h1
+  exact h1
+  -- you can start with `rw injective_def` if you like,
   -- and later you can `rw id_eval`, although remember that `rw` doesn't
   -- work under binders like `∀`, so use `intro` first.
   sorry
 
 example : Surjective (id : X → X) := by
-  sorry
-
+  rw[surjective_def]
+  intro b
+  use b
+  rw[id_def]
+  done
 -- Theorem: if f : X → Y and g : Y → Z are injective,
 -- then so is g ∘ f
 example (f : X → Y) (g : Y → Z) (hf : Injective f) (hg : Injective g) : Injective (g ∘ f) :=
@@ -129,10 +138,26 @@ example (f : X → Y) (g : Y → Z) (hf : Surjective f) (hg : Surjective g) : Su
 
 -- This is a question on the IUM (Imperial introduction to proof course) function problem sheet
 example (f : X → Y) (g : Y → Z) : Injective (g ∘ f) → Injective f := by
-  sorry
-
+  rw[injective_def] at *
+  intro h1
+  rw [injective_def]
+  intro a b
+  specialize h1 a b
+  intro h2
+  rw[comp_eval] at *
+  rw[comp_eval] at h1
+  apply h1
+  rw[h2]
 -- This is another one
 example (f : X → Y) (g : Y → Z) : Surjective (g ∘ f) → Surjective g := by
-  sorry
+  rw[surjective_def] at *
+  intro h1
+  rw[surjective_def]
+  intro b
+  specialize h1 b
+  cases' h1 with a h1
+  rw[comp_eval] at h1
+  constructor
+  exact h1
 
 end Section3sheet1

@@ -79,18 +79,53 @@ Let's prove some theorems.
 
 -/
 
-example : A ⊆ A := by sorry
+example : A ⊆ A := by
+  rfl
 
-example : A ⊆ B → B ⊆ C → A ⊆ C := by sorry
 
-example : A ⊆ A ∪ B := by sorry
+example : A ⊆ B → B ⊆ C → A ⊆ C := by
+  intro ab bc x ha
+  rw[subset_def] at *
+  specialize ab x
+  specialize bc x
+  apply ab at ha
+  apply bc at ha
+  exact ha
 
-example : A ∩ B ⊆ A := by sorry
+example : A ⊆ A ∪ B := by
+  rw[subset_def]
+  intro a ha
+  rw[mem_union_iff]
+  left
+  exact ha
 
-example : A ⊆ B → A ⊆ C → A ⊆ B ∩ C := by sorry
+example : A ∩ B ⊆ A := by
+    rintro x ⟨hxA, -⟩
+    exact hxA
 
-example : B ⊆ A → C ⊆ A → B ∪ C ⊆ A := by sorry
+example : A ⊆ B → A ⊆ C → A ⊆ B ∩ C := by
+  intro ab ac x1 ha
+  exact ⟨ab ha, ac ha⟩
+example : B ⊆ A → C ⊆ A → B ∪ C ⊆ A := by
 
-example : A ⊆ B → C ⊆ D → A ∪ C ⊆ B ∪ D := by sorry
+  rintro hBA hCA x (hxB | hxC)
+  exact hBA hxB
 
-example : A ⊆ B → C ⊆ D → A ∩ C ⊆ B ∩ D := by sorry
+  exact hCA hxC
+
+
+
+
+example : A ⊆ B → C ⊆ D → A ∪ C ⊆ B ∪ D := by
+  rintro ab cd x hX
+  cases' hX with h1 h2
+  left
+  exact ab h1
+  right
+  exact cd h2
+
+example : A ⊆ B → C ⊆ D → A ∩ C ⊆ B ∩ D := by
+
+  intro ab cd x ⟨hxa, hxc⟩
+  exact ⟨ab hxa, cd hxc⟩ -- seems like these brackets do the same thing as apply
+

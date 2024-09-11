@@ -30,13 +30,36 @@ Good luck!
 /-- If `a(n)` tends to `t` then `37 * a(n)` tends to `37 * t`-/
 theorem tendsTo_thirtyseven_mul (a : ℕ → ℝ) (t : ℝ) (h : TendsTo a t) :
     TendsTo (fun n ↦ 37 * a n) (37 * t) := by
-  sorry
+    intro ε hε
+    obtain ⟨X, hX⟩ := h (ε / 37) (by linarith)
+    use X
+    intro n hn
+    specialize hX n hn
+    simp
+    rw[← mul_sub, abs_mul]
+    rw[abs_of_nonneg]
+    linarith
+
+
+
 
 /-- If `a(n)` tends to `t` and `c` is a positive constant then
 `c * a(n)` tends to `c * t`. -/
 theorem tendsTo_pos_const_mul {a : ℕ → ℝ} {t : ℝ} (h : TendsTo a t) {c : ℝ} (hc : 0 < c) :
     TendsTo (fun n ↦ c * a n) (c * t) := by
-  sorry
+    intro ε hε
+    obtain ⟨X,hX⟩ := h (ε / c) (div_pos hε hc)
+    use X
+    intro n hn
+    simp
+    rw [← mul_sub, abs_mul, abs_of_pos hc]
+    specialize hX n hn
+    exact (lt_div_iff' hc).mp hX
+
+
+
+
+
 
 /-- If `a(n)` tends to `t` and `c` is a negative constant then
 `c * a(n)` tends to `c * t`. -/
